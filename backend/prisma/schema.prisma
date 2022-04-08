@@ -12,6 +12,7 @@ model breaks {
   shift_id Int
   start    DateTime
   end      DateTime?
+  lunch    Boolean
   shifts   shifts    @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 

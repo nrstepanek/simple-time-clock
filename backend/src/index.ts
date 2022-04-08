@@ -1,12 +1,12 @@
 import express from 'express'
 import cors from 'cors';
 import sessions from 'express-session';
-import sqlite3 from 'sqlite3';
 import cookieParser from 'cookie-parser';
 import { setupUserEndpoints } from './users/user-endpoints';
+import { setupShiftEndpoints } from './shifts/shift-endpoints';
+import { setupBreakEndpoints } from './breaks/break-endpoints';
 
 const app = express()
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(sessions({
@@ -17,15 +17,23 @@ app.use(sessions({
 }));
 app.use(cookieParser());
 
+var corsOptions = {
+  origin: 'http://localhost:8081',
+  credentials: true
+}
+app.use(cors(corsOptions));
+
 declare module 'express-session' {
 	interface SessionData {
 		userid: number;
 		username: string;
 		authenticated: boolean;
+    admin: boolean;
 	}
 }
 
-const publicApis = ['/login', '/register'];
+const publicApis = ['/login', '/register', '/checkAuthentication'];
+const adminApis = [];
 
 app.use((req, res, next) => {
 	if (req.session.authenticated || publicApis.includes(req.originalUrl)) {
@@ -38,10 +46,8 @@ app.use((req, res, next) => {
 
 const port = process.env.PORT || 5001;
 
-app.get('/', (_, res) => {
-  res.status(200).send();
-})
-
 setupUserEndpoints(app);
+setupShiftEndpoints(app);
+setupBreakEndpoints(app);
 
 app.listen(port, () => console.log(`Running on port ${port}`))
