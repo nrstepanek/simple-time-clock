@@ -25,7 +25,7 @@ declare module 'express-session' {
 	}
 }
 
-const publicApis = ['/login'];
+const publicApis = ['/login', '/register'];
 
 app.use((req, res, next) => {
 	if (req.session.authenticated || publicApis.includes(req.originalUrl)) {
@@ -37,13 +37,6 @@ app.use((req, res, next) => {
 })
 
 const port = process.env.PORT || 5001;
-
-const db = new sqlite3.Database('./timeclock.db', sqlite3.OPEN_READWRITE, (err) => {
-	if (err) {
-		return console.error(err.message);
-	};
-	console.log('Connected to the database.');
-});
 
 app.get('/', (_, res) => {
   res.status(200).send();

@@ -11,7 +11,8 @@ export function validate(type: string) {
 		case 'createUser': {
 			return [
 				body('username', 'username doesn\'t exist').exists(),
-				body('password', 'password doesn\'t exist').exists()
+				body('password', 'password doesn\'t exist').exists(),
+				body('admin', 'admin doesn\'t exist').exists()
 			]
 		}
 		case 'login': {
@@ -26,16 +27,33 @@ export function validate(type: string) {
 }
 
 export async function createUser(req: Request, res: Response) {
+	const {username, password, admin} = req.body;
+
+	const userExists = await checkUserNameExists(username);
+	if (userExists) {
+		res.status(409);
+		res.send('username already exists');
+		return;
+	}
+
 	bcrypt.genSalt(bcryptWorkFactor, (_err1: any, salt: string) => {
-		bcrypt.hash(req.body.password, salt, async (_err2: any, hash: string) => {
-			req.body.password = hash;
+		bcrypt.hash(password, salt, async (_err2: any, hash: string) => {
+			hash;
 			const result = await prisma.users.create({
-				data: req.body
+				data: { username, password: hash, admin}
 			});
 			res.status(200);
 			res.end();
 		});
 	});
+}
+
+async function checkUserNameExists(username: string) {
+	const user = await prisma.users.findFirst({
+		where: { username }
+	});
+	if (user) return true;
+	return false;
 }
 
 export async function login(req: Request, res: Response) {
@@ -45,9 +63,9 @@ export async function login(req: Request, res: Response) {
 		return;
 	}
 
-	const { sentUsername, sentPassword } = req.body;
+	const { username, password} = req.body;
 	const user = await prisma.users.findFirst({
-		where: { username: req.body.username }
+		where: { username: username }
 	});
 
 	if (!user) {
@@ -56,13 +74,13 @@ export async function login(req: Request, res: Response) {
 		return;
 	}
 
-	bcrypt.compare(sentPassword, user.password, (err, result) => {
+	bcrypt.compare(password, user.password, (err, result) => {
 		if (result) {
 			req.session.userid = user.id;
-			req.session.username = sentUsername;
+			req.session.username = username;
 			req.session.authenticated = true;
 			res.status(200);
-			res.cookie('username', sentUsername);
+			res.cookie('username', username);
 			res.cookie('userid', user.id);
 			res.send("success");
 			return;
