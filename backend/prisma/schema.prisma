@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../timeclock.db"
+}
+
+model breaks {
+  id       Int       @id @default(autoincrement())
+  shift_id Int
+  start    DateTime
+  end      DateTime?
+  shifts   shifts    @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model shifts {
+  id      Int       @id @default(autoincrement())
+  user_id Int
+  start   DateTime
+  end     DateTime?
+  users   users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  breaks  breaks[]
+}
+
+model users {
+  id       Int      @id @default(autoincrement())
+  username String
+  password String
+  admin    Boolean
+  shifts   shifts[]
+}
