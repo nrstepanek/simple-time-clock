@@ -11,25 +11,27 @@ import UserService from '@/services/UserService';
 export default {
   name: 'LogoutLanding',
   data: () => ({
-    loggedOut: false
+    loggedOut: false,
+    userid: -1
   }),
   methods: {
     async logout() {
-      console.log('logout function');
-      if (this.$store.state.username !== '') {
+      if (this.userid) {
         const logoutResponse = await UserService.logout();
         if (logoutResponse.status === 200) {
-          this.$store.commit('wipeState')
+          this.$cookies.remove('username');
+          this.$cookies.remove('userid');
           this.loggedOut = true;
         }
       } else {
-        this.$store.commit('wipeState')
         this.loggedOut = true;
       }
     }
   },
   async mounted() {
-    console.log('logout mount');
+    if (this.$cookies.get('userid')) {
+      this.userid = this.$cookies.get('userid');
+    }
     this.logout();
   }
 }

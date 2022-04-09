@@ -25,18 +25,20 @@ import UserService from '@/services/UserService'
 export default {
   name: 'TimeClock',
   data: () => ({
-    shifts: []
+    shifts: [],
+    userid: -1
   }),
-  created() {
-    this.getUserDetails();
+  async mounted() {
+    if (this.$cookies.get('userid')) {
+      this.userid = this.$cookies.get('userid');
+      this.getUserDetails();
+    }
   },
   methods: {
     async getUserDetails() {
-      console.log('getuserdetails');
-      console.log(this.$store.state.userid);
-      if (this.$store.state.userid !== -1) {
+      if (this.userid !== -1) {
         console.log('getting response');
-        const userDetailsResponse = await UserService.getUserDetails(this.$store.state.userid);
+        const userDetailsResponse = await UserService.getUserDetails(this.userid);
         this.shifts = userDetailsResponse.data.shifts;
       }
     }

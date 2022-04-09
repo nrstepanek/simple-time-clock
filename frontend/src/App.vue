@@ -31,7 +31,7 @@
 
     <v-main>
       <v-container>
-          <router-view :key="$route.fullPath"></router-view>
+          <router-view></router-view>
       </v-container>
     </v-main>
   </v-app>
@@ -47,7 +47,6 @@ export default {
     currentRoute: window.location.pathname,
     drawer: false,
     group: null,
-    username: null,
     unauthenticatedRoutes: ['login', 'createUser']
   }),
   methods: {
@@ -64,25 +63,25 @@ export default {
               this.$router.push('logout');
           }
       },
+      async checkAuthentication(to) {
+        const authResponse = await UserService.checkAuthentication();
+        if (authResponse.data !== 'authenticated') {
+          this.$cookies.remove('username');
+          this.$cookies.remove('userid');
+          if (to && !this.unauthenticatedRoutes.includes(to.path.substring(1))) {
+            console.log('Sending to login');
+            this.$router.push('login');
+          }
+        }
+      }
+  },
+  mounted() {
+    this.checkAuthentication(this.$route);
   },
   watch: {
     // eslint-disable-next-line
     '$route': async function(to, from) {
-      console.log(this.$store.state);
-      const authResponse = await UserService.checkAuthentication();
-      if (authResponse.data === 'authenticated') {
-        this.$store.state.username = this.$cookies.get('username');
-        this.$store.state.userid = this.$cookies.get('userid');
-      } else {
-        this.$store.state.username = '';
-        this.$store.state.userid = -1;
-        if (!this.unauthenticatedRoutes.includes(to.path.substring(1))) {
-          this.$router.push('login');
-        }
-      }
-      /*if (this.$store.state.userid === -1 && !this.unauthenticatedRoutes.includes(to.path.substring(1))) {
-        this.$router.push('login');
-      }*/
+      this.checkAuthentication(to);
     }
   }
 };
