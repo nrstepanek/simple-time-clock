@@ -5,15 +5,19 @@ import { getOpenShiftId } from '../shifts/shift-service';
 const prisma = new PrismaClient();
 
 export async function startBreak(req: Request, res: Response) {
+  console.log(req.session.userid);
   const hasOpenBreak = await userHasOpenBreak(req.session.userid);
+
   if (!hasOpenBreak) {
-    const openShiftId = await getOpenShiftId(req.body.user_id);
+    const openShiftId = await getOpenShiftId(req.session.userid);
     if (openShiftId) {
       const newBreak = await prisma.breaks.create({
         data: {
-          shift_id: openShiftId,
           start: new Date(),
-          lunch: req.body.lunch
+          lunch: req.body.lunch,
+          shifts: {
+            connect: { id: openShiftId }
+          }
         }
       });
 
@@ -29,7 +33,7 @@ export async function startBreak(req: Request, res: Response) {
 }
 
 export async function endBreak(req: Request, res: Response) {
-  const openShiftId = await getOpenShiftId(req.body.user_id);
+  const openShiftId = await getOpenShiftId(req.session.userid);
 
   if (openShiftId) {
     const currentBreak = await prisma.breaks.findFirst({
