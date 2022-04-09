@@ -1,14 +1,11 @@
 import Api from '@/services/api'
 
 export default {
-    fetchUsers() {
-        return Api().get('users');
-    },
-	fetchUsernames() {
+  getUserDetails(userid) {
+    return Api().get('users/' + userid.toString() + '/details');
+  },
+  getUsernames() {
 		return Api().get('users/usernames');
-	},
-	fetchUserGroups(userid) {
-		return Api().get('users/' + userid.toString() + '/groups')
 	},
 	createUser(userData) {
 		return Api().post('users', userData);
@@ -22,11 +19,4 @@ export default {
 	checkAuthentication() {
 		return Api().post('/checkAuthentication');
 	},
-
-	addGroup(groupData) {
-		return Api().post('/groups', groupData);
-	},
-	fetchThisUserGroups() {
-		return Api().get('user/groups')
-	}
 }

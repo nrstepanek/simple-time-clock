@@ -38,10 +38,13 @@ export default {
 		async submitLogin() {
 			this.showLoading = true;
 			const loginResponse = await UserService.login(this.loginData);
+      console.log(this.$store.state);
 			if (loginResponse.data === "success") {
-				console.log(loginResponse);
 				this.statusMessage = "Succesfully logged in.";
+        console.log(this.$store.state.username);
 				this.$store.commit('setUsername', this.loginData.username);
+        console.log(this.$store.state.username);
+        this.$store.commit('setUserid', this.loginData.userid);
 				this.$router.push('dashboard');
 			} else {
 				this.statusMessage = loginResponse.data;

@@ -27,26 +27,66 @@ export function validate(type: string) {
 }
 
 export async function getUserData(req: Request, res: Response) {
-  const userData = await prisma.users.findUnique({
-    where: {
-      id: req.session.userid
-    },
-    select: {
-      id: true,
-      username: true,
-      admin: true
-    }
-  });
-
-  res.json(userData);
-}
-
-export async function getAllUserData(req: Request, res: Response) {
-  if (req.session.admin || req.body.id || req.session.id) {
+  if (req.session.userid == parseInt(req.params.id) || req.session.admin) {
     const userData = await prisma.users.findUnique({
       where: {
-        id: req.session.userid
+        id: parseInt(req.params.id)
       },
+      select: {
+        id: true,
+        username: true,
+        admin: true
+      }
+    });
+
+    if (userData) {
+      res.json(userData);
+    }
+  }
+
+  res.status(401);
+  res.end();
+}
+
+export async function getUserDetails(req: Request, res: Response) {
+  if (req.session.userid == parseInt(req.params.id) || req.session.admin) {
+    const userData = await prisma.users.findUnique({
+      where: {
+        id: parseInt(req.params.id)
+      },
+      select: {
+        id: true,
+        username: true,
+        admin: true,
+        shifts: {
+          select: {
+            id: true,
+            start: true,
+            end: true,
+            breaks: {
+              select: {
+                id: true,
+                start: true,
+                end: true,
+                lunch: true
+              }
+            }
+          }
+        }
+      }
+    });
+    if (userData) {
+      res.json(userData);
+    }
+  }
+
+  res.status(401);
+  res.end();
+}
+
+export async function getAllUserDetails(req: Request, res: Response) {
+  if (req.session.admin) {
+    const userData = await prisma.users.findMany({
       select: {
         id: true,
         username: true,

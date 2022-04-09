@@ -7,7 +7,7 @@
       dark
     >
       <v-app-bar-nav-icon @click="showNavBar()"></v-app-bar-nav-icon>
-      <v-toolbar-title>Movie Night</v-toolbar-title>
+      <v-toolbar-title>Simple Time Application</v-toolbar-title>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
@@ -19,23 +19,11 @@
             </v-list-item-icon>
             <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="routeToAccount">
-            <v-list-item-icon>
-              <v-icon>mdi-account</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Account</v-list-item-title>
-          </v-list-item>
           <v-list-item @click="routeToLogout">
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>
             </v-list-item-icon>
             <v-list-item-title>Logout</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="routeToGroups">
-            <v-list-item-icon>
-              <v-icon>mdi-account</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Groups</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -43,7 +31,7 @@
 
     <v-main>
       <v-container>
-          <router-view></router-view>
+          <router-view :key="$route.fullPath"></router-view>
       </v-container>
     </v-main>
   </v-app>
@@ -52,6 +40,7 @@
 
 <script>
 import UserService from '@/services/UserService';
+
 export default {
   name: 'App',
   data: () => ({
@@ -70,34 +59,30 @@ export default {
               this.$router.push('dashboard');
           }
       },
-      routeToAccount() {
-          if (this.$route.path != '/account') {
-              this.$router.push('account');
-          }
-      },
       routeToLogout() {
           if (this.$route.path != '/logout') {
               this.$router.push('logout');
           }
       },
-      routeToGroups() {
-          if (this.$route.path != '/groups') {
-            this.$router.push('/groups');
-          }
-      }
   },
   watch: {
     // eslint-disable-next-line
     '$route': async function(to, from) {
+      console.log(this.$store.state);
       const authResponse = await UserService.checkAuthentication();
       if (authResponse.data === 'authenticated') {
         this.$store.state.username = this.$cookies.get('username');
+        this.$store.state.userid = this.$cookies.get('userid');
       } else {
         this.$store.state.username = '';
+        this.$store.state.userid = -1;
         if (!this.unauthenticatedRoutes.includes(to.path.substring(1))) {
           this.$router.push('login');
         }
       }
+      /*if (this.$store.state.userid === -1 && !this.unauthenticatedRoutes.includes(to.path.substring(1))) {
+        this.$router.push('login');
+      }*/
     }
   }
 };

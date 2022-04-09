@@ -10,20 +10,28 @@ Vue.config.productionTip = false
 Vue.use(VueCookies);
 Vue.use(Vuex)
 
-// eslint-disable-next-line
 const store = new Vuex.Store({
 	state: {
 		username: '',
+    userid: -1
 	},
 	mutations: {
 		setUsername(state, username) {
 			state.username = username;
-		}
+		},
+    setUserid(state, id) {
+      state.id = id;
+    },
+    wipeState(state) {
+      state.username = '',
+      state.id = -1
+    }
 	}
 })
 
 new Vue({
   vuetify,
   router,
+  store: store,
   render: h => h(App)
 }).$mount('#app')

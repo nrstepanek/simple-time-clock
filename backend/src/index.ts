@@ -32,10 +32,12 @@ declare module 'express-session' {
 	}
 }
 
-const publicApis = ['/login', '/register', '/checkAuthentication'];
+const publicApis = ['/login', '/register', '/checkAuthentication', '/users/usernames', '/users'];
 const adminApis = [];
 
 app.use((req, res, next) => {
+  console.log(req.originalUrl);
+  console.log(req.session);
 	if (req.session.authenticated || publicApis.includes(req.originalUrl)) {
 		next();
 	} else {
