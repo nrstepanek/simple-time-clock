@@ -18,7 +18,7 @@ app.use(sessions({
 app.use(cookieParser());
 
 var corsOptions = {
-  origin: 'http://localhost:8081',
+  origin: ['http://localhost:8081', 'http://localhost:8080'],
   credentials: true
 }
 app.use(cors(corsOptions));
