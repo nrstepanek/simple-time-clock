@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-progress-circular v-if="!loggedOut" indeterminate color="purple"></v-progress-circular>
-    <div v-if="loggedOut">Succesfully logged out.</div>
+    <div v-if="loggedOut">Succesfully logged out. <router-link to="/login">Login again.</router-link></div>
   </div>
 </template>
 

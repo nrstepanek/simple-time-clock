@@ -58,7 +58,6 @@ export default {
     shifts: [],
     currentShift: null,
     currentBreak: null,
-    isAdmin: false,
     userid: -1,
     username: ""
   }),
@@ -66,8 +65,12 @@ export default {
     if (this.$cookies.get('userid')) {
       this.userid = this.$cookies.get('userid');
       this.username = this.$cookies.get('username');
-      this.isAdmin = this.$cookies.get('admin');
       this.getUserDetails();
+    }
+  },
+  computed: {
+    isAdmin() {
+      return this.$cookies.get('admin') === 'true';
     }
   },
   methods: {
@@ -89,7 +92,8 @@ export default {
     getShiftText(shiftData) {
       const startDate = new Date(shiftData.start);
       if (!shiftData.end) {
-        return "Active shift, started " + startDate.toLocaleTimeString();
+        return "Active shift, started " + startDate.toLocaleTimeString() +
+            ", " + shiftData.breaks.length + " breaks";
       }
       else {
         const endDate = new Date(shiftData.end);

@@ -19,7 +19,7 @@
             </v-list-item-icon>
             <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
-          <v-list-item v-if="isAdmin" @click="routeToSummaryReport">
+          <v-list-item @click="routeToSummaryReport">
             <v-list-item-icon>
               <v-icon>mdi-home</v-icon>
             </v-list-item-icon>
@@ -53,7 +53,6 @@ export default {
     currentRoute: window.location.pathname,
     drawer: false,
     group: null,
-    isAdmin: false,
     unauthenticatedRoutes: ['login', 'createUser']
   }),
   methods: {
@@ -81,13 +80,9 @@ export default {
           this.$cookies.remove('username');
           this.$cookies.remove('userid');
           this.$cookies.remove('admin');
-          this.isAdmin = false;
           if (to && !this.unauthenticatedRoutes.includes(to.path.substring(1))) {
-            console.log('Sending to login');
             this.$router.push('login');
           }
-        } else {
-          this.isAdmin = this.$cookies.get('admin');
         }
       }
   },

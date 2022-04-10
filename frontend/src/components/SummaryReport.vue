@@ -15,7 +15,6 @@ import UserService from '@/services/UserService'
 
 export default {
   data: () => ({
-    isAdmin: false,
     summaryData: [],
     headers: [
       { text: 'User ID', value: 'userid' },
@@ -28,16 +27,16 @@ export default {
     ]
   }),
   mounted() {
-    /*console.log(this.$cookies.get('admin'));
-    this.isAdmin = this.$cookies.get('admin');
-    console.log(this.isAdmin);
-    if (!this.isAdmin) {
-      this.$router.push('dashboard');
+    if (this.isAdmin) {
+      this.generateSumamry();
+    } else {
+      this.$router.push('/dashboard');
     }
-    else {
-      this.getAllUserDetails();
-    }*/
-    this.generateSumamry();
+  },
+  computed: {
+    isAdmin() {
+      return this.$cookies.get('admin') === 'true';
+    }
   },
   methods: {
     async generateSumamry() {
