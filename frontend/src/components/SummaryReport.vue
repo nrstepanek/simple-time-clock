@@ -23,7 +23,11 @@ export default {
       { text: 'Total Shifts', value: 'shiftCount' },
       { text: 'Total Shift Time', value: 'totalShiftTime' },
       { text: 'Total Breaks', value: 'breakCount' },
-      { text: 'Total Lunches', value: 'lunchCount' }
+      { text: 'Average Break Time', value: 'averageBreakTime' },
+      { text: 'Total Break Time', value: 'totalBreakTime' },
+      { text: 'Total Lunches', value: 'lunchCount' },
+      { text: 'Average Lunch Time', value: 'averageLunchTime' },
+      { text: 'Total Lunch Time', value: 'totalLunchTime' },
     ]
   }),
   mounted() {
@@ -49,6 +53,8 @@ export default {
         const shiftCount = shifts.length;
         let totalShiftTime = 0;
         let totalWorkTime = 0;
+        let totalBreakTime = 0;
+        let totalLunchTime = 0;
         let breakCount = 0;
         let lunchCount = 0;
 
@@ -61,23 +67,41 @@ export default {
           }
 
           const breaks = shift.breaks;
-          let totalBreakTime = 0;
           breaks.forEach((b) => {
             if (b.lunch) {
               lunchCount += 1;
+              if (b.end) {
+                totalLunchTime += new Date(b.end) - new Date(b.start);
+              }
             }
             breakCount += 1;
             if (b.end) {
-              totalBreakTime += new Date(b.start) - new Date(b.end);
+              totalBreakTime += new Date(b.end) - new Date(b.start);
             }
           });
 
-          totalWorkTime -= totalBreakTime;
         });
+
+        let averageBreakTime = totalBreakTime / breakCount;
+        if (averageBreakTime) {
+          averageBreakTime = this.formatDurationString(averageBreakTime);
+        } else {
+          averageBreakTime = "-";
+        }
+        let averageLunchTime = totalLunchTime / lunchCount;
+        if (averageLunchTime) {
+          averageLunchTime = this.formatDurationString(averageLunchTime);
+        } else {
+          averageLunchTime = "-";
+        }
+        totalWorkTime -= totalBreakTime;
+        totalWorkTime = this.formatDurationString(totalWorkTime);
         totalShiftTime = this.formatDurationString(totalShiftTime);
+        totalBreakTime = this.formatDurationString(totalBreakTime);
+        totalLunchTime = this.formatDurationString(totalLunchTime);
 
-
-        this.summaryData.push({userid, username, totalWorkTime, shiftCount, totalShiftTime, breakCount, lunchCount});
+        this.summaryData.push({userid, username, totalWorkTime, shiftCount, totalShiftTime,
+            breakCount, averageBreakTime, totalBreakTime, lunchCount, averageLunchTime, totalLunchTime});
       });
     },
     formatDurationString(milliseconds) {
