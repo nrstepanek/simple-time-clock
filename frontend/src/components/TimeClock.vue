@@ -19,27 +19,29 @@
             :key="shiftBreak.id"
           >
             <v-list-item-content>
-              <v-list-item-title>{{getBreakText(shiftBreak)}}</v-list-item-title>
+              <v-list-item-title style="margin-left: 40px">{{getBreakText(shiftBreak)}}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
       </v-list>
     </v-col>
     <v-col cols="6" sm="4">
-      <div v-if="currentShift">
-        Shift in progress, start time: {{this.currentShift.start}}
-        <div v-if="currentBreak">
-          Break in progress, start time: {{this.currentBreak.start}}
-          <v-btn @click="endBreak">End break</v-btn>
+      <div v-if="currentShift" style="margin-top: 10px">
+        <b>Shift in progress, started: {{this.formatDateTime(this.currentShift.start)}}</b>
+        <div v-if="currentBreak" style="margin-top: 10px">
+          <b>{{this.currentBreakTypeString()}} in progress, started: {{this.formatDateTime(this.currentBreak.start)}}</b>
+          <div id="button-group">
+            <v-btn class = "clock-button" @click="endBreak">End break</v-btn>
+          </div>
         </div>
-        <div v-else>
-          <v-btn @click="startBreak">Start break</v-btn>
-          <v-btn @click="startLunchBreak">Start lunch break</v-btn>
-          <v-btn @click="endShift">End shift</v-btn>
+        <div v-else id="button-group">
+          <v-btn class="clock-button" @click="startBreak">Start break</v-btn>
+          <v-btn class="clock-button" @click="startLunchBreak">Start lunch break</v-btn>
+          <v-btn class="clock-button" @click="endShift">End shift</v-btn>
         </div>
       </div>
-      <div v-else>
-        <v-btn @click="startShift">Start shift</v-btn>
+      <div v-else id="button-group">
+        <v-btn class="clock-button" @click="startShift">Start shift</v-btn>
       </div>
     </v-col>
   </v-row>
@@ -75,6 +77,9 @@ export default {
       if (this.userid !== -1) {
         const userDetailsResponse = await UserService.getUserDetails(this.userid);
         this.shifts = userDetailsResponse.data.shifts;
+        this.shifts.sort((a, b) => {
+          return new Date(b.start) - new Date(a.start);
+        });
         this.setCurrentShift();
         if (this.currentShift) {
           this.setCurrentBreak();
@@ -88,8 +93,8 @@ export default {
       }
       else {
         const endDate = new Date(shiftData.end);
-        return startDate.toLocaleDateString("en-US") + " Shift      " + startDate.toLocaleTimeString() +
-            " to " + endDate.toLocaleTimeString();
+        return startDate.toLocaleDateString("en-US") + " Shift " + startDate.toLocaleTimeString() +
+            " to " + endDate.toLocaleTimeString() + ", " + shiftData.breaks.length + " breaks";
       }
     },
     getBreakText(breakData) {
@@ -115,6 +120,16 @@ export default {
         return breakText + startDate.toLocaleTimeString() +
             " to " + endDate.toLocaleTimeString();
       }
+    },
+    formatDateTime(dt) {
+      dt = new Date(dt);
+      return dt.toLocaleDateString("en-US") + " at " + dt.toLocaleTimeString();
+    },
+    currentBreakTypeString() {
+      if (this.currentBreak.lunch) {
+        return "Lunch break";
+      }
+      return "Break";
     },
     setCurrentShift() {
       this.shifts.forEach(shift => {
@@ -163,3 +178,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+#button-group {
+  margin-top: 20px
+}
+.clock-button {
+  margin-left: 20px
+}
+</style>
