@@ -1,8 +1,23 @@
 <template>
 	<div>
 		<v-form v-model="valid">
-			<v-text-field v-model="loginData.username" :rules="usernameRules" :disabled="formDisabled" label="Username" required/>
-			<v-text-field v-model="loginData.password" :rules="passwordRules" :disabled="formDisabled" label="Password" required/>
+			<v-text-field
+        v-model="loginData.username"
+        :rules="usernameRules"
+        :disabled="formDisabled"
+        label="Username"
+        required
+      />
+			<v-text-field
+        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+        :type="showPassword ? 'text' : 'password'"
+        v-model="loginData.password"
+        :rules="passwordRules"
+        :disabled="formDisabled"
+        label="Password"
+        @click:append="showPassword = !showPassword"
+        required
+      />
 			<v-btn :disabled="!valid || formDisabled" color="success" class="mr-4" @click="submitLogin">
 				Login
 			</v-btn>
@@ -23,6 +38,7 @@ export default {
 		formDisabled: false,
 		statusMessage: '',
 		showLoading: false,
+    showPassword: false,
 		loginData: {
 			username: '',
 			password: '',

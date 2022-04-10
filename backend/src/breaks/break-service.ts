@@ -5,7 +5,6 @@ import { getOpenShiftId } from '../shifts/shift-service';
 const prisma = new PrismaClient();
 
 export async function startBreak(req: Request, res: Response) {
-  console.log(req.session.userid);
   const hasOpenBreak = await userHasOpenBreak(req.session.userid);
 
   if (!hasOpenBreak) {
