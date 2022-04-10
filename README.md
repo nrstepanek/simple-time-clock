@@ -1,13 +1,18 @@
 # simple-time-clock
 
 
-# Set up the database
+# How to run
 
-npx prisma introspect
-npx prisma generate
+Install node https://nodejs.org/en/
 
-# TODO
+In one terminal:
+cd backend
+npm install
+npm run start
 
-Use only one prisma client
-Setup linter
-Breakout all req.body variables and add validation
+In another terminal:
+cd frontend
+npm install
+npm run serve
+
+The app should now be accessible at localhost:8081
