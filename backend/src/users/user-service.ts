@@ -113,6 +113,7 @@ export async function getAllUserDetails(req: Request, res: Response) {
   }
 
   res.status(401);
+  res.end();
 }
 
 export async function getUsers(req: Request, res: Response) {
@@ -172,7 +173,7 @@ export async function login(req: Request, res: Response) {
     return;
   }
 
-  const { username, password} = req.body;
+  const {username, password} = req.body;
   const user = await prisma.users.findFirst({
     where: { username: username }
   });
@@ -192,6 +193,7 @@ export async function login(req: Request, res: Response) {
       res.status(200);
       res.cookie('username', username);
       res.cookie('userid', user.id);
+      res.cookie('admin', user.admin);
       res.send("success");
       return;
     } else {

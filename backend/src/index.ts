@@ -37,7 +37,6 @@ const adminApis = [];
 
 app.use((req, res, next) => {
   console.log(req.originalUrl);
-  console.log(req.session);
 	if (req.session.authenticated || publicApis.includes(req.originalUrl)) {
 		next();
 	} else {

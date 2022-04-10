@@ -22,7 +22,7 @@ export async function startBreak(req: Request, res: Response) {
       });
 
       if (newBreak) {
-        res.status(200);
+        res.status(204);
         res.end();
       }
     }
@@ -56,7 +56,7 @@ export async function endBreak(req: Request, res: Response) {
     }
 
     if (updatedBreak) {
-      res.status(200);
+      res.status(204);
       res.end();
     }
   }

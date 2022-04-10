@@ -1,7 +1,8 @@
 <template>
   <v-row no-gutters>
     <v-col cols="12" sm="6">
-      <h3>Shift history for user #{{this.userid}}, {{this.username}}.</h3>
+      <h3 v-if="isAdmin">Shift history for admin user #{{this.userid}}, {{this.username}}.</h3>
+      <h3 v-else>Shift history for user #{{this.userid}}, {{this.username}}.</h3>
       <v-list>
         <v-list-group
           v-for="shift in shifts"
@@ -55,6 +56,7 @@ export default {
     shifts: [],
     currentShift: null,
     currentBreak: null,
+    isAdmin: false,
     userid: -1,
     username: ""
   }),
@@ -62,6 +64,7 @@ export default {
     if (this.$cookies.get('userid')) {
       this.userid = this.$cookies.get('userid');
       this.username = this.$cookies.get('username');
+      this.isAdmin = this.$cookies.get('admin');
       this.getUserDetails();
     }
   },

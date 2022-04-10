@@ -4,6 +4,7 @@ import Login from '@/components/LoginForm';
 import TimeClock from '@/components/TimeClock';
 import LogoutLanding from '@/components/LogoutLanding';
 import CreateUser from '@/components/CreateUser';
+import SummaryReport from '@/components/SummaryReport';
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/dashboard',
       name: 'TimeClock',
       component: TimeClock
+    },
+    {
+      path: '/summaryReport',
+      name: 'SummaryReport',
+      component: SummaryReport
     }
   ]
 })

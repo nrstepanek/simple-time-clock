@@ -15,7 +15,7 @@ export async function startShift(req: Request, res: Response) {
     });
 
     if (newShift) {
-      res.status(200);
+      res.status(204);
       res.end();
     }
   }
@@ -48,7 +48,7 @@ export async function endShift(req: Request, res: Response) {
     }
 
     if (updatedShift) {
-      res.status(200);
+      res.status(204);
       res.end();
     }
   }

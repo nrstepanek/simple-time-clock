@@ -19,6 +19,12 @@
             </v-list-item-icon>
             <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
+          <v-list-item v-if="isAdmin" @click="routeToSummaryReport">
+            <v-list-item-icon>
+              <v-icon>mdi-home</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Summary Report</v-list-item-title>
+          </v-list-item>
           <v-list-item @click="routeToLogout">
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>
@@ -47,31 +53,41 @@ export default {
     currentRoute: window.location.pathname,
     drawer: false,
     group: null,
+    isAdmin: false,
     unauthenticatedRoutes: ['login', 'createUser']
   }),
   methods: {
       showNavBar() {
-          this.drawer = true;
+        this.drawer = true;
       },
       routeToDashboard() {
-          if (this.$route.path != '/dashboard') {
-              this.$router.push('dashboard');
-          }
+        if (this.$route.path != '/dashboard') {
+            this.$router.push('dashboard');
+        }
       },
       routeToLogout() {
-          if (this.$route.path != '/logout') {
-              this.$router.push('logout');
-          }
+        if (this.$route.path != '/logout') {
+            this.$router.push('logout');
+        }
+      },
+      routeToSummaryReport() {
+        if (this.$route.path != '/summaryReport') {
+          this.$router.push('summaryReport');
+        }
       },
       async checkAuthentication(to) {
         const authResponse = await UserService.checkAuthentication();
         if (authResponse.data !== 'authenticated') {
           this.$cookies.remove('username');
           this.$cookies.remove('userid');
+          this.$cookies.remove('admin');
+          this.isAdmin = false;
           if (to && !this.unauthenticatedRoutes.includes(to.path.substring(1))) {
             console.log('Sending to login');
             this.$router.push('login');
           }
+        } else {
+          this.isAdmin = this.$cookies.get('admin');
         }
       }
   },

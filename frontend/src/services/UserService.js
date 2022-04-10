@@ -4,6 +4,9 @@ export default {
   getUserDetails(userid) {
     return Api().get('users/' + userid.toString() + '/details');
   },
+  getAllUserDetails() {
+    return Api().get('users/details');
+  },
   getUsernames() {
 		return Api().get('users/usernames');
 	},

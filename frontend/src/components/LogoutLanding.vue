@@ -21,6 +21,7 @@ export default {
         if (logoutResponse.status === 200) {
           this.$cookies.remove('username');
           this.$cookies.remove('userid');
+          this.$cookies.remove('admin');
           this.loggedOut = true;
         }
       } else {
